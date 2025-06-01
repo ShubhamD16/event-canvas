@@ -21,5 +21,4 @@ Event Canvas is a platform designed to empower users and businesses to create an
 
 ### Prerequisites
 - **Java Development Kit (JDK)**: Install [JDK](https://www.oracle.com/java/technologies/javase-downloads.html).
-- **Node.js**: Install [Node.js](https://nodejs.org/).
 - **MySQL**: Set up and configure a MySQL database.
