@@ -31,67 +31,62 @@ import com.app.services.ClientService;
 @RestController
 @RequestMapping("/client")
 public class ClientController {
-	
+
 	@Autowired
 	ClientService clientService;
-	
-	
-	
+
 	@GetMapping("/all")
-	public List<ClientDto> getAllClients() {
-		return clientService.getAllClients().stream().map(c->new ClientDto(c)).collect(Collectors.toList());
+	public ResponseEntity<List<ClientDto>> getAllClients() {
+		return ResponseEntity
+				.ok(clientService.getAllClients().stream().map(c -> new ClientDto(c)).collect(Collectors.toList()));
 	}
-	
+
 	@PostMapping("/add")
 	public ApiResponse addClient(@RequestBody Client client) {
-		if(clientService.addClient(client) == null) {
+		if (clientService.addClient(client) == null) {
 			return new ApiResponse("Error adding client");
 		}
 		return new ApiResponse("Client Added");
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getClientFromId(@PathVariable Long id) {
-		 
+	public ResponseEntity<ClientDto> getClientFromId(@PathVariable Long id) {
+
 		Client client = clientService.getClient(id).orElse(null);
-		
-		return new ResponseEntity<>(new ClientDto(client),HttpStatus.OK);
+
+		return ResponseEntity.ok(new ClientDto(client));
 	}
-	
+
 	@PostMapping("/authanticate")
-	public ClientDto Authanticate(@RequestParam("email") String email, @RequestParam("password") String password) {
+	public ResponseEntity<ClientDto> Authanticate(@RequestParam("email") String email,
+			@RequestParam("password") String password) {
 		Client client = clientService.authanticate(email, password).orElse(null);
-		if(client == null) {
-			return null;
+		if (client == null) {
+			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 		}
-		return new ClientDto(client);
-		
+		return ResponseEntity.ok(new ClientDto(client));
+
 	}
-	
-	
-	
+
 	@PutMapping("/update/{id}")
-	public ClientDto UpdateClient(@RequestBody Client client,@PathVariable Long id) {
-		return new ClientDto(clientService.updateClient(id,client));
+	public ResponseEntity<ClientDto> UpdateClient(@RequestBody Client client, @PathVariable Long id) {
+		return ResponseEntity.ok(new ClientDto(clientService.updateClient(id, client)));
 	}
-	
-	
+
 	@DeleteMapping("/delete/{id}")
-	public String DeleteClient(@PathVariable Long id) {
-		return clientService.deleteClient(id);	
+	public ResponseEntity<String> DeleteClient(@PathVariable Long id) {
+		return ResponseEntity.ok(clientService.deleteClient(id));
 	}
-	
+
 	@GetMapping("/feedback/{userId}")
-	public FeedbackDto getFeedback(@PathVariable Long userId) {
-		return clientService.getFeedback(userId);
+	public ResponseEntity<FeedbackDto> getFeedback(@PathVariable Long userId) {
+		return ResponseEntity.ok(clientService.getFeedback(userId));
 	}
-	
+
 	@PutMapping("/feedback/add/{userId}")
-	public String addFeedback(@PathVariable Long userId,@RequestBody Feedback feedback) {
+	public ResponseEntity<String> addFeedback(@PathVariable Long userId, @RequestBody Feedback feedback) {
 		feedback.setDate(LocalDateTime.now());
-		return clientService.addFeedback(userId, feedback);
+		return ResponseEntity.ok(clientService.addFeedback(userId, feedback));
 	}
-	
-	
-	
+
 }
